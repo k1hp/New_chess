@@ -1,19 +1,20 @@
 import exceptions
 
 from colorama import Fore, Back, Style
-from settings import FIGURE_COLOR
+from settings import FIGURE_COLOR, figures
 
 
 
 class Colors:
     def total_getter(self, figure_symbol: str = None, figure_color: str = None):
-        if figure_symbol is None:
-            return ''
         if figure_color not in FIGURE_COLOR:
             raise exceptions.FigureColorError
-        elif figure_symbol not in settings.figures:
+        elif figure_symbol not in figures:
             raise exceptions.FigureSymbolError
-        return FIGURE_COLOR[figure_color] + f' {} '
+
+        if figure_symbol is None:
+            return '   '
+        return FIGURE_COLOR[figure_color] + f' {figure_symbol} '
 
     def get_white(self, symbol):
         WHITE_COLOR = Back.WHITE + f" {self.symbol} " + Style.RESET_ALL
