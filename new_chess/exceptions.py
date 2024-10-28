@@ -2,11 +2,20 @@ class FieldErrors(Exception):
     pass
 
 
-class FigureColorError(FieldErrors):
+class FigureErrors(Exception):
+    pass
+
+
+class BackColorError(FieldErrors):
+    def __str__(self):
+        return "Неверно указан цвет клетки, возможно только: black, white, green, red"
+
+
+class FigureColorError(FigureErrors):
     def __str__(self):
         return "Неверно указан цвет фигуры, возможно только: black или white"
 
 
 class FigureSymbolError(FieldErrors):
     def __str__(self):
-        return 'Неверно указан символ фигуры'
+        return "Неверно указан символ фигуры"
