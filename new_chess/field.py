@@ -1,7 +1,15 @@
+from __future__ import annotations
+
 import exceptions
+from typing import TYPE_CHECKING
+
+# import figures
+from settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE
 
 from colorama import Style
-from settings import FIGURE_COLOR, BACKS, figures
+
+if TYPE_CHECKING:
+    from figures import Figure
 
 
 class GetColor:
@@ -15,7 +23,7 @@ class GetColor:
             raise exceptions.FigureColorError
         self.figure_color = figure_color
 
-    def set_back_color(self, back_color: str | None = None):
+    def set_back_color(self, back_color: str | None):
         if back_color is None:
             if (
                 self.x_coordinate % 2 == 0
@@ -33,7 +41,7 @@ class GetColor:
 
 
 class GetColoredPosition:
-    def __init__(self, color: GetColor, figure_symbol: str | None = None):
+    def __init__(self, color: GetColor, figure_symbol: str | None):
         self.cell = (
             self.back_getter(color.back_color)
             + self.figure_symbol_getter(figure_symbol, color.figure_color)
@@ -48,10 +56,10 @@ class GetColoredPosition:
 
         if figure_color not in FIGURE_COLOR:
             raise exceptions.FigureColorError
-        elif figure_symbol not in figures:
+        elif figure_symbol not in FIGURES_SYMBOLS:
             raise exceptions.FigureSymbolError
 
-        return FIGURE_COLOR[figure_color] + f" {figure_symbol} "
+        return FIGURE_COLOR[figure_color] + f"{HALF_SPACE}{figure_symbol} "
 
     def back_getter(self, back_color: str) -> str:
         if back_color not in BACKS:
@@ -64,26 +72,74 @@ class Field(list):
         for vertical in range(8):
             self.append([])
             for horizontal in range(8):
-                color = GetColor(horizontal, vertical)
-                color.set_back_color()
-                colored_position = GetColoredPosition(color)
-                # print(colored_position.cell)
-                self[vertical].append(colored_position.cell)
+                cell = create_cell(horizontal, vertical)
+                # color = GetColor(horizontal, vertical)
+                # color.set_back_color()
+                # colored_position = GetColoredPosition(color)
+                self[vertical].append((cell, None))
 
-    def print_field(self):
-        for index in range(8):
-            print(*self[index], sep="")
+    def print_field(self, reverse=False):
+        length = reversed(range(len(self))) if reverse else range(len(self))
+        for index in length:
+            print(*map(lambda item: item[0], self[index]), sep="")
 
 
-class AddFigure: ...
+def create_cell(
+    x_coordinate: int,
+    y_coordinate: int,
+    back_color: str | None = None,
+    figure_color: str | None = None,
+    figure_symbol: str | None = None,
+):
+    color = GetColor(x_coordinate, y_coordinate)
+    if not figure_color is None:
+        color.set_figure_color(figure_color)
+    color.set_back_color(back_color)
+    colored_position = GetColoredPosition(color, figure_symbol)
+    return colored_position.cell
+
+
+def add_figure(
+    figure: Figure, field: Field
+):  # проблема с импортом Figure при типизации
+    field[figure.y_coordinate][figure.x_coordinate] = (
+        create_cell(
+            figure.x_coordinate,
+            figure.y_coordinate,
+            None,
+            figure.color,
+            figure.symbol,
+        ),
+        figure,
+    )
+
+
+def change_back(
+    horizontal: int, vertical: int, field: Field, back_color: str | None = None
+):
+    figure = field[horizontal][vertical][-1]
+
+    field[vertical][horizontal] = (
+        create_cell(
+            horizontal,
+            vertical,
+            back_color,
+            None if figure is None else figure.color,
+            None if figure is None else figure.symbol,
+        ),
+        figure,
+    )
 
 
 class RemoveFigure: ...
 
 
-field = Field()
-field.create_new_field()
-field.print_field()
-
+# field = Field()
+# field.create_new_field()
+#
+# add_figure(figures.Soldier(0, 0, "black"), field)
+# field.print_field()
+# print()
+# field.print_field(reverse=True)
 
 # print(BACKS["white"] + "   " + Style.RESET_ALL)

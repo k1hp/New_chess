@@ -19,3 +19,7 @@ class FigureColorError(FigureErrors):
 class FigureSymbolError(FieldErrors):
     def __str__(self):
         return "Неверно указан символ фигуры"
+
+
+class EndOfField(FigureErrors):
+    pass
