@@ -4,9 +4,7 @@ import exceptions
 from typing import TYPE_CHECKING
 
 # import figures
-from settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE
-
-from colorama import Style
+from settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE, END
 
 if TYPE_CHECKING:
     from figures import Figure
@@ -51,7 +49,7 @@ class GetColoredPosition:
         self.cell = (
             self.back_getter(color.back_color)
             + self.figure_symbol_getter(figure_symbol, color.figure_color)
-            + Style.RESET_ALL
+            + END
         )
 
     def figure_symbol_getter(
@@ -102,9 +100,7 @@ def create_cell(
     return colored_position.cell
 
 
-def add_figure(
-    figure: Figure, field: Field
-):  # проблема с импортом Figure при типизации
+def add_figure(figure: Figure, field: Field):
     field[figure.y_coordinate][figure.x_coordinate] = (
         create_cell(
             figure.x_coordinate,
@@ -134,14 +130,14 @@ def change_back(
     )
 
 
-def attacked_cell(coordinates: tuple, field: Field, figure_color: str) -> bool:
+def attacked_cell(coordinates: tuple, field: Field, enemy_color: str) -> bool:
     result = []
     for line in field:
         for cell in line:
             if (
                 not cell[-1] is None
-                and figure_color == cell[-1].color
-                and coordinates in cell[-1].move_cells(field)
+                and enemy_color == cell[-1].color
+                and coordinates in cell[-1].attack_cells(field)
             ):
                 result.append(cell)
 
@@ -149,6 +145,20 @@ def attacked_cell(coordinates: tuple, field: Field, figure_color: str) -> bool:
 
 
 class RemoveFigure: ...
+
+
+def add_figure_ways(horizontal, vertical, new_field: Field):
+    current_color = new_field[vertical][horizontal][-1].color
+
+    for coordinates in new_field[vertical][horizontal][-1].move_cells(new_field):
+        if coordinates[-1] is None:
+            back_color = "green"
+        elif coordinates[-1].color == current_color:
+            back_color = "blue"
+        else:
+            back_color = "red"
+
+        change_back(coordinates[0], coordinates[1], new_field, back_color)
 
 
 # field = Field()

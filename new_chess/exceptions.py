@@ -23,3 +23,15 @@ class FigureSymbolError(FieldErrors):
 
 class EndOfField(FigureErrors):
     pass
+
+
+class MovesErrors(Exception):
+    pass
+
+
+class ChooseFigureError(MovesErrors):
+    pass
+
+
+class InputError(Exception):
+    pass
