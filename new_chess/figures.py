@@ -16,6 +16,9 @@ class Figure(ABC):
     @abstractmethod
     def move_cells(self, field: field.Field) -> list: ...
 
+    @abstractmethod
+    def attack_cells(self, field: field.Field) -> list: ...
+
 
 class Soldier(Figure):
     symbol = "♟"
@@ -68,6 +71,9 @@ class Soldier(Figure):
             return result
         raise exceptions.EndOfField
 
+    def attack_cells(self, field: field.Field) -> list:
+
+
 
 class King(Figure):
     symbol = "♚"
@@ -76,5 +82,47 @@ class King(Figure):
         super().__init__(*args, **kwargs)
         self.moved = False
 
-    def move_cells(self, field: field.Field) -> list:
+    def move_cells(self, current_field: field.Field) -> list:
         result = []
+        for vertical, line in enumerate(current_field):
+            result.extend(
+                (horizontal, vertical, cell[-1])
+                for horizontal, cell in enumerate(line)
+                if abs(horizontal - self.x_coordinate) <= 1
+                and abs(vertical - self.y_coordinate) <= 1
+                and not (
+                    horizontal == self.x_coordinate and vertical == self.y_coordinate
+                )
+                and (True if cell[-1] is None else cell[-1].color != self.color)
+            )
+
+        return result
+
+    def full_check_move(self, current_field: field.Field) -> list:
+        result = self.move_cells(current_field)
+        return list(
+            filter(
+                lambda coordinates: (
+                    not field.attacked_cell(
+                        coordinates,
+                        current_field,
+                        "black" if self.color == "white" else "white",
+                    )
+                ),
+                result,
+            )
+        )
+
+    def attack_cells(self, field: field.Field) -> list: ...
+
+    # нужно исключить клетки которые пересекаются с атакуемыми
+
+
+class Rook(Figure):
+    symbol = "♜"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.moved = False
+
+    def move_cells(self, field: field.Field) -> list: ...

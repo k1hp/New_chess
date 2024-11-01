@@ -12,6 +12,12 @@ if TYPE_CHECKING:
     from figures import Figure
 
 
+def get_field_cell(horizontal: int, vertical: int, field: Field) -> tuple:
+    if horizontal in range(8) and vertical in range(8):
+        return field[vertical][horizontal]
+    raise exceptions.EndOfField
+
+
 class GetColor:
     def __init__(self, x_coordinate: int, y_coordinate: int):
         self.x_coordinate = x_coordinate
@@ -73,9 +79,6 @@ class Field(list):
             self.append([])
             for horizontal in range(8):
                 cell = create_cell(horizontal, vertical)
-                # color = GetColor(horizontal, vertical)
-                # color.set_back_color()
-                # colored_position = GetColoredPosition(color)
                 self[vertical].append((cell, None))
 
     def print_field(self, reverse=False):
@@ -117,7 +120,7 @@ def add_figure(
 def change_back(
     horizontal: int, vertical: int, field: Field, back_color: str | None = None
 ):
-    figure = field[horizontal][vertical][-1]
+    figure = get_field_cell(horizontal, vertical, field)[-1]
 
     field[vertical][horizontal] = (
         create_cell(
@@ -129,6 +132,20 @@ def change_back(
         ),
         figure,
     )
+
+
+def attacked_cell(coordinates: tuple, field: Field, figure_color: str) -> bool:
+    result = []
+    for line in field:
+        for cell in line:
+            if (
+                not cell[-1] is None
+                and figure_color == cell[-1].color
+                and coordinates in cell[-1].move_cells(field)
+            ):
+                result.append(cell)
+
+    return bool(result)
 
 
 class RemoveFigure: ...
