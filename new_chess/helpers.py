@@ -5,6 +5,9 @@ from typing import TYPE_CHECKING
 from settings import ALPHABET, BACKS, END
 from exceptions import InputError
 
+# from figures import King
+# import permanent_checkers
+
 if TYPE_CHECKING:
     from figures import Figure
     from field import Field
@@ -16,6 +19,14 @@ def create_coordinates_tuple(
     return horizontal, vertical, field[vertical][horizontal][-1]
 
 
+def change_coordinates(horizontal, vertical, figure: Figure) -> Figure:
+    # if isinstance(figure, King):
+    #     permanent_checkers.KING[figure.color] = (horizontal, vertical)
+    figure.x_coordinate = horizontal
+    figure.y_coordinate = vertical
+    return figure
+
+
 def get_enemy_color(current_color: str) -> str:
     return "black" if current_color == "white" else "white"
 
@@ -24,7 +35,7 @@ def change_player_color(current_color: str) -> str:
     return get_enemy_color(current_color)
 
 
-def choose_cell() -> tuple:
+def choose_cell() -> tuple[int, int]:
     while True:
         try:
             input_coordinates = input("Введие клетку (например: A1): ")

@@ -20,3 +20,5 @@ HALF_SPACE = "\u2005"
 FIGURES_SYMBOLS = "♚♛♜♝♞♟"
 
 ALPHABET = "abcdefgh"
+
+SWAP_FIGURES_NAMES = ("bishop", "knight", "queen", "rook")

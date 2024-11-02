@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from settings import FIGURE_COLOR
+
+from settings import FIGURE_COLOR, SWAP_FIGURES_NAMES
 import exceptions
 import field
 import helpers
@@ -248,3 +249,30 @@ class Rook(Figure):
                 return False
 
         return True if not self.moved and not king[-1].moved else False
+
+
+class Bishop(Figure):
+    symbol = "♝"
+
+    def move_cells(self, current_field: field.Field) -> list: ...
+
+    def attack_cells(self, current_field: field.Field) -> list: ...
+
+
+class Knight(Figure):
+    symbol = "♞"
+
+    def move_cells(self, current_field: field.Field) -> list: ...
+
+    def attack_cells(self, current_field: field.Field) -> list: ...
+
+
+class Queen(Figure):
+    symbol = "♛"
+
+    def move_cells(self, current_field: field.Field) -> list: ...
+
+    def attack_cells(self, current_field: field.Field) -> list: ...
+
+
+SWAP_FIGURES = dict(zip(SWAP_FIGURES_NAMES, (Bishop, Knight, Queen, Rook)))

@@ -1,3 +1,3 @@
-from random import choice
+# from settings import SWAP_FIGURES
 
-print(choice(["white", "black"]))
+print(dict(zip(SWAP_FIGURES, reversed(SWAP_FIGURES))))
