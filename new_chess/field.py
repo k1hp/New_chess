@@ -5,7 +5,7 @@ import helpers
 from typing import TYPE_CHECKING
 
 # import figures
-from settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE, END
+from settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE, END, DIGITS
 
 if TYPE_CHECKING:
     from figures import Figure
@@ -76,8 +76,14 @@ class Field(list):
 
     def print_field(self, reverse=False) -> None:
         length = reversed(range(len(self))) if reverse else range(len(self))
+        # for index in length:
+        #     print(*map(lambda item: item[0], self[index]), sep="")
+        helpers.print_alphabet()
         for index in length:
-            print(*map(lambda item: item[0], self[index]), sep="")
+            print(f" {DIGITS[index]} ", end="")
+            print(*map(lambda item: item[0], self[index]), sep="", end="")
+            print(f" {DIGITS[index]} ")
+        helpers.print_alphabet()
 
 
 def create_cell(

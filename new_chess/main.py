@@ -14,11 +14,15 @@ def main():
 
     new_field = field.Field()
     new_field.create_new_field()
+    figures.place_all_figures(new_field)
 
-    field.add_figure(figures.Rook(5, 5, "white"), new_field)
-    field.add_figure(figures.King(4, 6, "black"), new_field)
-    field.add_figure(figures.Rook(0, 6, "black"), new_field)
-    field.add_figure(figures.Soldier(3, 7, "black"), new_field)
+    # field.add_figure(figures.Rook(5, 5, "white"), new_field)
+    # field.add_figure(figures.Soldier(6, 1, "black"), new_field)
+    # field.add_figure(figures.King(4, 7, "black"), new_field)
+    # field.add_figure(figures.Rook(0, 6, "black"), new_field)
+    # field.add_figure(figures.Rook(7, 6, "black"), new_field)
+    # field.add_figure(figures.Soldier(3, 7, "black"), new_field)
+
     new_field.print_field()
     print()
     new_field.print_field(reverse=True)

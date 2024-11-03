@@ -74,6 +74,8 @@ class Actions(Parent):
         field.add_figure(figure, self.field)
 
     def relocate(self, guiding_coordinates: tuple[int, int, Figure]) -> None:
+        if hasattr(self.figure, "moved"):
+            self.figure.moved = True
         field.remove_figure(self.figure, self.field)
         self.figure.x_coordinate, self.figure.y_coordinate = guiding_coordinates[0:2]
         field.add_figure(self.figure, self.field)
@@ -97,6 +99,7 @@ class Actions(Parent):
 
         field.add_figure(self.figure, self.field)
         helpers.change_coordinates(horizontal, self.figure.y_coordinate, king)
+        king.moved = True
         field.add_figure(king, self.field)
 
 
@@ -106,7 +109,7 @@ def make_move(current_field: field.Field, color: str) -> None:
             horizontal, vertical = helpers.choose_cell()
             move = Moves(horizontal, vertical, current_field, color)
             move.figure_ways()
-            current_field.print_field()
+            # current_field.print_field()
         except ChooseFigureError as exc:
             helpers.print_error(str(exc))
         except EndOfField:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from settings import ALPHABET, BACKS, END
+from settings import ALPHABET, BACKS, END, HALF_SPACE
 from exceptions import InputError
 
 # from figures import King
@@ -61,3 +61,8 @@ def choose_cell() -> tuple[int, int]:
 
 def print_error(text: str) -> None:
     print(BACKS["red"] + text + END, end="\n\n")
+
+
+def print_alphabet():
+    print("   ", end="")
+    print(*map(lambda letter: f" {letter.upper()} ", ALPHABET), sep="")

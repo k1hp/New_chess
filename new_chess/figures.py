@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from settings import FIGURE_COLOR, SWAP_FIGURES_NAMES
 import exceptions
-import field
+from field import Field, attacked_cell, add_figure
 import helpers
 
 
@@ -16,10 +16,21 @@ class Figure(ABC):
         self.color = color
 
     @abstractmethod
-    def move_cells(self, current_field: field.Field) -> list: ...
+    def move_cells(self, current_field: Field) -> list:
+
+        return list(
+            filter(
+                lambda coordinates: (
+                    True
+                    if coordinates[-1] is None
+                    else coordinates[-1].color != self.color
+                ),
+                self.attack_cells(current_field),
+            )
+        )
 
     @abstractmethod
-    def attack_cells(self, current_field: field.Field) -> list: ...
+    def attack_cells(self, current_field: Field) -> list: ...
 
 
 class Soldier(Figure):
@@ -29,10 +40,7 @@ class Soldier(Figure):
         super().__init__(*args, **kwargs)
         self.moved = False
 
-    # def move_cells(self, field: field.Field):
-    #     return super().move_cells(field)
-
-    def move_cells(self, current_field: field.Field) -> list:
+    def move_cells(self, current_field: Field) -> list:
         result = []
 
         start = (
@@ -74,7 +82,7 @@ class Soldier(Figure):
             return result
         raise exceptions.EndOfField
 
-    def attack_cells(self, current_field: field.Field) -> list:
+    def attack_cells(self, current_field: Field) -> list:
         result = []
         left = None if self.x_coordinate - 1 < 0 else self.x_coordinate - 1
         right = None if self.x_coordinate + 1 > 7 else self.x_coordinate + 1
@@ -96,30 +104,34 @@ class King(Figure):
         super().__init__(*args, **kwargs)
         self.moved = False
 
-    def move_cells(self, current_field: field.Field) -> list:
-        result = []
-        for vertical, line in enumerate(current_field):
-            result.extend(
-                (horizontal, vertical, cell[-1])
-                for horizontal, cell in enumerate(line)
-                if abs(horizontal - self.x_coordinate) <= 1
-                and abs(vertical - self.y_coordinate) <= 1
-                and not (
-                    horizontal == self.x_coordinate and vertical == self.y_coordinate
-                )
-                and (True if cell[-1] is None else cell[-1].color != self.color)
-            )
+    # def move_cells(self, current_field: Field) -> list:
+    #     # result = []
+    #     # for vertical, line in enumerate(current_field):
+    #     #     result.extend(
+    #     #         (horizontal, vertical, cell[-1])
+    #     #         for horizontal, cell in enumerate(line)
+    #     #         if abs(horizontal - self.x_coordinate) <= 1
+    #     #         and abs(vertical - self.y_coordinate) <= 1
+    #     #         and not (
+    #     #             horizontal == self.x_coordinate and vertical == self.y_coordinate
+    #     #         )
+    #     #         and (True if cell[-1] is None else cell[-1].color != self.color)
+    #     #     )
+    #     #
+    #     # return self.full_check_move(current_field, result)
 
+    def move_cells(self, current_field: Field) -> list:
+        result = super().move_cells(current_field)
         return self.full_check_move(current_field, result)
 
-    def full_check_move(self, current_field: field.Field, result: list = None) -> list:
+    def full_check_move(self, current_field: Field, result: list = None) -> list:
         if result is None:
             result = []
-
+        print(result)
         return list(
             filter(
                 lambda coordinates: (
-                    not field.attacked_cell(
+                    not attacked_cell(
                         coordinates, current_field, helpers.get_enemy_color(self.color)
                     )
                 ),
@@ -127,7 +139,7 @@ class King(Figure):
             )
         )
 
-    def attack_cells(self, current_field: field.Field) -> list:
+    def attack_cells(self, current_field: Field) -> list:
         result = []
         for vertical, line in enumerate(current_field):
             result.extend(
@@ -150,8 +162,7 @@ class Rook(Figure):
         super().__init__(*args, **kwargs)
         self.moved = False
 
-    def move_cells(self, current_field: field.Field) -> list:
-        # attack_cells исключаем фигуры такого же цвета как self.color
+    def move_cells(self, current_field: Field) -> list:
         return list(
             filter(
                 lambda coordinates: (
@@ -168,7 +179,7 @@ class Rook(Figure):
             )
         )
 
-    def attack_cells(self, current_field: field.Field) -> list:
+    def attack_cells(self, current_field: Field) -> list:
         start_horizontal = 0
         end_horizontal = 7
         start_vertical = 0
@@ -218,7 +229,7 @@ class Rook(Figure):
 
         return result
 
-    def can_castling(self, current_field: field.Field) -> bool:
+    def can_castling(self, current_field: Field) -> bool:
 
         try:
             king = next(
@@ -243,7 +254,7 @@ class Rook(Figure):
             coordinates = helpers.create_coordinates_tuple(
                 horizontal, vertical, current_field
             )
-            if field.attacked_cell(
+            if attacked_cell(
                 coordinates=coordinates, field=current_field, enemy_color=enemy_color
             ):
                 return False
@@ -254,25 +265,95 @@ class Rook(Figure):
 class Bishop(Figure):
     symbol = "♝"
 
-    def move_cells(self, current_field: field.Field) -> list: ...
+    def move_cells(self, current_field: Field) -> list:
+        return super().move_cells(current_field)
 
-    def attack_cells(self, current_field: field.Field) -> list: ...
+    def attack_cells(self, current_field: Field) -> list:
+        result = []
+        directions = [
+            (-1, -1),
+            (-1, 1),
+            (1, -1),
+            (1, 1),
+        ]  # Диагонали: верхний левый, верхний правый, нижний левый, нижний правый
+
+        for direction in directions:
+            x, y = self.x_coordinate, self.y_coordinate
+            while True:
+                x += direction[0]
+                y += direction[1]
+
+                # Проверяем, не вышли ли мы за пределы доски
+                if not (0 <= x < len(current_field[0]) and 0 <= y < len(current_field)):
+                    break
+
+                figure_coordinates = helpers.create_coordinates_tuple(
+                    x, y, current_field
+                )
+                result.append(helpers.create_coordinates_tuple(x, y, current_field))
+                if not figure_coordinates[-1] is None:
+                    break
+
+        return result
 
 
 class Knight(Figure):
     symbol = "♞"
 
-    def move_cells(self, current_field: field.Field) -> list: ...
+    def move_cells(self, current_field: Field) -> list:
+        return super().move_cells(current_field)
 
-    def attack_cells(self, current_field: field.Field) -> list: ...
+    def attack_cells(self, current_field: Field) -> list:
+        result = []
+
+        for vertical, line in enumerate(current_field):
+            for horizontal, cell in enumerate(line):
+                if (
+                    abs(self.x_coordinate - horizontal) == 2
+                    and abs(self.y_coordinate - vertical) == 1
+                ) or (
+                    abs(self.x_coordinate - horizontal) == 1
+                    and abs(self.y_coordinate - vertical) == 2
+                ):
+                    result.append(
+                        helpers.create_coordinates_tuple(
+                            horizontal, vertical, current_field
+                        )
+                    )
+        return result
 
 
 class Queen(Figure):
     symbol = "♛"
 
-    def move_cells(self, current_field: field.Field) -> list: ...
+    def move_cells(self, current_field: Field) -> list:
+        return super().move_cells(current_field)
 
-    def attack_cells(self, current_field: field.Field) -> list: ...
+    def attack_cells(self, current_field: Field) -> list:
+        return Rook.attack_cells(self, current_field) + Bishop.attack_cells(
+            self, current_field
+        )
 
 
 SWAP_FIGURES = dict(zip(SWAP_FIGURES_NAMES, (Bishop, Knight, Queen, Rook)))
+
+START_FIGURE_PLACES = {
+    0: Rook,
+    1: Knight,
+    2: Bishop,
+    3: Queen,
+    4: King,
+    5: Bishop,
+    6: Knight,
+    7: Rook,
+}
+
+
+def place_all_figures(current_field: Field) -> None:
+    for horizontal in range(8):
+        figure = START_FIGURE_PLACES[horizontal]
+        add_figure(figure(horizontal, 0, "black"), current_field)
+        add_figure(figure(horizontal, 7, "white"), current_field)
+
+        add_figure(Soldier(horizontal, 1, "black"), current_field)
+        add_figure(Soldier(horizontal, 6, "white"), current_field)

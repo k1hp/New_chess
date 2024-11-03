@@ -21,4 +21,6 @@ FIGURES_SYMBOLS = "♚♛♜♝♞♟"
 
 ALPHABET = "abcdefgh"
 
+DIGITS = "12345678"
+
 SWAP_FIGURES_NAMES = ("bishop", "knight", "queen", "rook")
