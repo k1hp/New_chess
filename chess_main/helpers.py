@@ -46,7 +46,7 @@ def choose_cell() -> tuple[int, int]:
             input_coordinates = input("Введие клетку (например: A1): ")
 
             if not input_coordinates[-1].isdigit():
-                raise InputError("Второй символ должен быть цифрой")
+                raise InputError("Первый символ - буква, а второй - цифра")
 
             letter = input_coordinates[0].lower()
             vertical = int(input_coordinates[-1]) - 1

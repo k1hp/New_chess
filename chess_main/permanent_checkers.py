@@ -29,16 +29,16 @@ def check_shah(current_field: Field, color: str) -> bool:
 
 def move_opportunity(function):
     @wraps(function)
-    def wrapper(self, current_field: Field):
+    def wrapper(self, current_field: Field) -> list:
         try:
             king_coordinates = get_king_coordinates(current_field, self.color)
             enemy_figure = attacking_figures(
                 king_coordinates, current_field, helpers.get_enemy_color(self.color)
             )[0]
             if enemy_figure in self.attack_cells(current_field):
-                return enemy_figure
+                return [enemy_figure]
         except IndexError:
-            pass
+            print("Атакующих фигур не найдено")
 
         remove_figure(self, current_field)
         result = check_shah(current_field, self.color)

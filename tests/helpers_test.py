@@ -1,5 +1,6 @@
 import unittest
 
+from unittest.mock import patch
 # sys.path.append(os.path.join(os.getcwd(), "../chess_main"))
 from chess_main import helpers
 from chess_main.exceptions import ColorError, NotFigureError
@@ -56,6 +57,33 @@ class TestHelpers(unittest.TestCase):
             self.assertEqual(helpers.change_player_color("blue"), "")
 
     def test_(self): ... # надо юзать моки from unittest import mock что-то такое
+
+
+class ChooseCellTest(unittest.TestCase):
+    @patch('builtins.input')
+    def test_choose_cells(self, mock_input):
+        # for letter in '1a':
+        #     for digit in 'a2':
+        mock_input.return_value = 'a1'
+        self.assertEqual((0, 0), helpers.choose_cell())
+        mock_input.return_value = 'b2'
+        self.assertEqual((1, 1), helpers.choose_cell())
+        # нужно как-то сделать, чтобы у нас при первом запросе просили второй а второй уже нормальный давать
+
+def calculator():
+    a = input()
+    b = input()
+    return a + b
+
+
+
+# class DifferenceTest(unittest.TestCase):  # попробовать чтобы подставлялись в input разные значения
+#     @patch("builtins.input", "builtins.input")
+#     def test_calculator(self, mock_input1, mock_input2):
+#         mock_input1.return_value = '2'
+#         mock_input2.return_value = '4'
+#         self.assertEqual(calculator(), '22')
+
 
 
 if __name__ == "__main__":
