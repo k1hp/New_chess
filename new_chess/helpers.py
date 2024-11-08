@@ -2,15 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from settings import ALPHABET, BACKS, END, HALF_SPACE
-from exceptions import InputError
+from chess_main.settings import ALPHABET, BACKS, END
+from chess_main.exceptions import InputError
 
-# from figures import King
-# import permanent_checkers
+
 
 if TYPE_CHECKING:
-    from figures import Figure
-    from field import Field
+    from chess_main.figures import Figure
+    from chess_main.field import Field
 
 
 def create_coordinates_tuple(
