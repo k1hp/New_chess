@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 
 from chess_main.settings import FIGURE_COLOR, SWAP_FIGURES_NAMES
 from chess_main import exceptions
-from chess_main.field import Field, attacked_cell, add_figure
+from chess_main.field import Field, attacked_cell, add_figure, remove_figure
 from chess_main import helpers
-from chess_main.permanent_checkers import move_opportunity
+from chess_main.decorators import move_opportunity
 
 
 class Figure(ABC):
@@ -113,8 +113,9 @@ class King(Figure):
     def full_check_move(self, current_field: Field, result: list = None) -> list:
         if result is None:
             result = []
-        print(result)
-        return list(
+
+        remove_figure(self, current_field)
+        result = list(
             filter(
                 lambda coordinates: (
                     not attacked_cell(
@@ -124,6 +125,8 @@ class King(Figure):
                 result,
             )
         )
+        add_figure(self, current_field)
+        return result
 
     def attack_cells(self, current_field: Field) -> list:
         result = []
@@ -347,3 +350,6 @@ def place_all_figures(current_field: Field) -> None:
 
         add_figure(Soldier(horizontal, 1, "black"), current_field)
         add_figure(Soldier(horizontal, 6, "white"), current_field)
+    # add_figure(Rook(4, 5, 'white'), current_field)
+    # add_figure(King(4, 0, 'black'), current_field)
+    # add_figure(Rook(4, 1, 'black'), current_field)
