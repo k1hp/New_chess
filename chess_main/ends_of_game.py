@@ -4,12 +4,17 @@ from dataclasses import dataclass
 
 from chess_main.exceptions import EndOfGame
 from chess_main.helpers import print_error, create_coordinates_tuple, get_enemy_color
-from chess_main.permanent_checkers import check_shah, KING, attacking_figures, get_king_coordinates
+from chess_main.permanent_checkers import (
+    check_shah,
+    attacking_figures,
+    get_king_coordinates,
+)
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from chess_main.figures import Figure
     from chess_main.field import Field
+
 
 class ShahChecker:
     def __init__(self, current_field: Field, color: str):
@@ -18,7 +23,9 @@ class ShahChecker:
         self.current_color = color
         self.enemy_color = get_enemy_color(color)
         try:
-            self.king_coordinates = get_king_coordinates(self.current_field, self.current_color)
+            self.king_coordinates = get_king_coordinates(
+                self.current_field, self.current_color
+            )
             self.attacking_figure = attacking_figures(
                 self.king_coordinates, self.current_field, self.enemy_color
             )[0]
@@ -35,12 +42,21 @@ class ShahChecker:
             for cell in line:
                 if hasattr(cell[-1], "color"):
                     self.all_figures[cell[-1].color].append(cell[-1].__class__.__name__)
+
     def shah_cells(self) -> list:
+        """
+        Клетки, на которые можно сходить, чтобы отразить шах.
+        """
         return self.blocker.get_blocked_cells()
 
+
 class GameEnd(ShahChecker):
+    """
+    Концовки игры: мат, пат, ничья.
+    """
+
     def checkmate(self):
-        if check_shah(self.current_field, self.current_color):
+        if not check_shah(self.current_field, self.current_color):
             return None
 
         try:
@@ -52,29 +68,35 @@ class GameEnd(ShahChecker):
                     attacking_figures(
                         self.attacking_figure, self.current_field, self.current_color
                     )
-                )
-                and not self.blocker.can_blocked(),  # нельзя перекрыть,
+                ),
+                not self.blocker.can_blocked(),  # нельзя перекрыть,
             )
             if all(conditions):
                 raise EndOfGame
         except IndexError:
             pass
 
-    def stalemate(self): ...
+    def stalemate(self):
+        ...
 
     def draw(self):
         set_fgs = {"Knight", "Bishop"}
         if len(self.all_figures["black"]) == 1 and len(self.all_figures["white"]) == 1:
             raise EndOfGame("Draw Game")
         if (
-            len(self.all_figures["black"]) == 2
-            and len(self.all_figures["white"]) == 2
-            and set_fgs.intersection(self.all_figures["black"])
-            and set_fgs.intersection(self.all_figures["white"])
+                len(self.all_figures["black"]) == 2
+                and len(self.all_figures["white"]) == 2
+                and set_fgs.intersection(self.all_figures["black"])
+                and set_fgs.intersection(self.all_figures["white"])
         ):
             raise EndOfGame("Draw Game")
 
     def check_all_conditions(self):
+        """
+        Проверка всех концовок.
+
+        Если вернется исключение, значит игра окончена.
+        """
         try:
             self.checkmate()
             self.stalemate()
@@ -92,10 +114,14 @@ class Blockers:
     color: str
 
     @property
-    def enemy_name(self):
+    def enemy_name(self) -> str:
         return self.enemy_figure[-1].__class__.__name__
 
-    def can_blocked(self):
+    def can_blocked(self) -> bool:
+        """
+        Возможно ли заблокировать данную фигуру или нет.
+        :rtype: bool
+        """
         if self.enemy_name in ("Soldier", "Knight", "King"):
             return False
         blocked_cells = self.get_blocked_cells()
@@ -104,19 +130,26 @@ class Blockers:
             for cell in blocked_cells
         )
 
-    def get_blocked_cells(self):
+    def get_blocked_cells(self) -> list:
+        """
+        Получение клеток сходив на которые можно заблокировать шах, избежав мата.
+        """
         functions = {
             "Soldier": self.get_enemy_coordinates,
             "Knight": self.get_enemy_coordinates,
             "Rook": self.get_rook_block,
             "Queen": self.get_queen_block,
-            "Bishop": self.get_bishop_block
+            "Bishop": self.get_bishop_block,
         }
         return functions[self.enemy_name]()
 
-    def get_enemy_coordinates(self):
+    def get_enemy_coordinates(self) -> list:
         return [self.enemy_figure]
+
     def get_rook_block(self) -> list:
+        """
+        Все клетки от атакующей ладьи до короля.
+        """
         enemy_horizontal = self.enemy_figure[0]
         enemy_vertical = self.enemy_figure[1]
         king_horizontal = self.union_king[0]
@@ -124,27 +157,41 @@ class Blockers:
 
         result = []
 
-        if not (
-            enemy_horizontal != king_horizontal
-            or enemy_vertical != king_vertical
-        ):
+        if not (enemy_horizontal != king_horizontal or enemy_vertical != king_vertical):
             return result
 
         if enemy_horizontal == king_horizontal:
-            for coordinate in range(min(enemy_vertical, king_vertical), max(enemy_vertical, king_vertical)+1):
+            for coordinate in range(
+                    min(enemy_vertical, king_vertical),
+                    max(enemy_vertical, king_vertical) + 1,
+            ):
                 if coordinate == king_vertical:
                     continue
-                result.append(create_coordinates_tuple(enemy_horizontal, coordinate, self.current_field))
+                result.append(
+                    create_coordinates_tuple(
+                        enemy_horizontal, coordinate, self.current_field
+                    )
+                )
 
         elif enemy_vertical == king_vertical:
-            for coordinate in range(min(enemy_horizontal, king_horizontal), max(enemy_horizontal, king_horizontal) + 1):
+            for coordinate in range(
+                    min(enemy_horizontal, king_horizontal),
+                    max(enemy_horizontal, king_horizontal) + 1,
+            ):
                 if coordinate == king_horizontal:
                     continue
-                result.append(create_coordinates_tuple(enemy_vertical, coordinate, self.current_field))
+                result.append(
+                    create_coordinates_tuple(
+                        enemy_vertical, coordinate, self.current_field
+                    )
+                )
 
         return result
 
     def get_bishop_block(self) -> list:
+        """
+        Все клетки от атакующего слона до короля.
+        """
         # result = []
         # directions = [
         #     (-chess_main, -chess_main),  # верхний левый
@@ -179,4 +226,7 @@ class Blockers:
         return []
 
     def get_queen_block(self) -> list:
+        """
+        Все клетки от атакующей королевы до короля.
+        """
         return self.get_rook_block() + self.get_bishop_block()

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from chess_main.field import attacked_cell, Field, remove_figure, add_figure
+
 # from functools import wraps
 from chess_main import helpers
 from typing import TYPE_CHECKING
@@ -10,7 +11,6 @@ if TYPE_CHECKING:
     from chess_main.figures import Figure
     from chess_main.field import Field
 
-
 BLACK_KING_COORDINATES = (4, 0)
 WHITE_KING_COORDINATES = (4, 7)
 
@@ -18,6 +18,13 @@ KING = {"white": WHITE_KING_COORDINATES, "black": BLACK_KING_COORDINATES}
 
 
 def check_shah(current_field: Field, color: str) -> bool:
+    """
+    Проверка на шах королю данного цвета.
+
+    :param current_field: текущее поле
+    :param color: текущий цвет фигур, в том числе короля
+    :return:
+    """
     enemy_color = helpers.get_enemy_color(color)
     king = KING[color]
     king_coordinates = helpers.create_coordinates_tuple(
@@ -25,7 +32,6 @@ def check_shah(current_field: Field, color: str) -> bool:
     )
 
     return attacked_cell(king_coordinates, current_field, enemy_color)
-
 
 
 # def move_opportunity(function):
@@ -52,18 +58,21 @@ def check_shah(current_field: Field, color: str) -> bool:
 
 
 def attacking_figures(
-    figure_coordinates: tuple[int, int, Figure | None],
-    current_field: Field,
-    enemy_color: str,
+        figure_coordinates: tuple[int, int, Figure | None],
+        current_field: Field,
+        enemy_color: str,
 ) -> list:
+    """
+    Список фигур, атакующих данную позицию.
+    """
     result = []
 
     for vertical, line in enumerate(current_field):
         for horizontal, cell in enumerate(line):
             if (
-                not cell[-1] is None
-                and enemy_color == cell[-1].color
-                and figure_coordinates in cell[-1].attack_cells(current_field)
+                    not cell[-1] is None
+                    and enemy_color == cell[-1].color
+                    and figure_coordinates in cell[-1].attack_cells(current_field)
             ):
                 result.append(
                     helpers.create_coordinates_tuple(
@@ -75,4 +84,7 @@ def attacking_figures(
 
 
 def get_king_coordinates(current_field: Field, color: str) -> tuple[int, int, Figure]:
+    """
+    Получение координат корля по цвету.
+    """
     return helpers.create_coordinates_tuple(*KING[color], current_field)

@@ -5,7 +5,14 @@ from chess_main import helpers
 from typing import TYPE_CHECKING
 
 # import figures
-from chess_main.settings import FIGURE_COLOR, BACKS, FIGURES_SYMBOLS, HALF_SPACE, END, DIGITS
+from chess_main.settings import (
+    FIGURE_COLOR,
+    BACKS,
+    FIGURES_SYMBOLS,
+    HALF_SPACE,
+    END,
+    DIGITS,
+)
 
 if TYPE_CHECKING:
     from chess_main.figures import Figure
@@ -17,18 +24,24 @@ class GetColor:
         self.y_coordinate = y_coordinate
         self.figure_color = None
 
-    def set_figure_color(self, figure_color: str):
+    def set_figure_color(self, figure_color: str) -> None:
+        """
+        Насроить цвет фигуры.
+        """
         if figure_color not in FIGURE_COLOR:
             raise exceptions.FigureColorError
         self.figure_color = figure_color
 
-    def set_back_color(self, back_color: str | None):
+    def set_back_color(self, back_color: str | None) -> None:
+        """
+        Насроить цвет фона клетки.
+        """
         if back_color is None:
             if (
-                self.x_coordinate % 2 == 0
-                and self.y_coordinate % 2 != 0
-                or self.x_coordinate % 2 != 0
-                and self.y_coordinate % 2 == 0
+                    self.x_coordinate % 2 == 0
+                    and self.y_coordinate % 2 != 0
+                    or self.x_coordinate % 2 != 0
+                    and self.y_coordinate % 2 == 0
             ):
                 self.back_color = "black"
             else:
@@ -40,16 +53,23 @@ class GetColor:
 
 
 class GetColoredPosition:
+    """
+    Получение готовой отрисованной позиции.
+    """
+
     def __init__(self, color: GetColor, figure_symbol: str | None):
         self.cell = (
-            self.back_getter(color.back_color)
-            + self.figure_symbol_getter(figure_symbol, color.figure_color)
-            + END
+                self.back_getter(color.back_color)
+                + self.figure_symbol_getter(figure_symbol, color.figure_color)
+                + END
         )
 
     def figure_symbol_getter(
-        self, figure_symbol: str | None, figure_color: str | None
+            self, figure_symbol: str | None, figure_color: str | None
     ) -> str:
+        """
+        Возвращает 3 символа для отрисовки фигуры или ее отсутсвия.
+        """
         if figure_symbol is None:
             return "   "
 
@@ -61,6 +81,9 @@ class GetColoredPosition:
         return FIGURE_COLOR[figure_color] + f"{HALF_SPACE}{figure_symbol} "
 
     def back_getter(self, back_color: str) -> str:
+        """
+        Получение цвета фона из константы BACKS.
+        """
         if back_color not in BACKS:
             raise exceptions.BackColorError
         return BACKS[back_color]
@@ -87,12 +110,15 @@ class Field(list):
 
 
 def create_cell(
-    x_coordinate: int,
-    y_coordinate: int,
-    back_color: str | None = None,
-    figure_color: str | None = None,
-    figure_symbol: str | None = None,
+        x_coordinate: int,
+        y_coordinate: int,
+        back_color: str | None = None,
+        figure_color: str | None = None,
+        figure_symbol: str | None = None,
 ) -> str:
+    """
+    Создание клетки.
+    """
     color = GetColor(x_coordinate, y_coordinate)
     if not figure_color is None:
         color.set_figure_color(figure_color)
@@ -102,6 +128,9 @@ def create_cell(
 
 
 def add_figure(figure: Figure, field: Field) -> None:
+    """
+    Добавление фигуры на данное поле по ее координатам.
+    """
     field[figure.y_coordinate][figure.x_coordinate] = (
         create_cell(
             figure.x_coordinate,
@@ -115,6 +144,9 @@ def add_figure(figure: Figure, field: Field) -> None:
 
 
 def remove_figure(figure: Figure, field: Field) -> None:
+    """
+    Удаление фигуры с данного поля по ее координатам.
+    """
     field[figure.y_coordinate][figure.x_coordinate] = (
         create_cell(figure.x_coordinate, figure.y_coordinate),
         None,
@@ -122,8 +154,11 @@ def remove_figure(figure: Figure, field: Field) -> None:
 
 
 def change_back(
-    horizontal: int, vertical: int, field: Field, back_color: str | None = None
-):
+        horizontal: int, vertical: int, field: Field, back_color: str | None = None
+) -> None:
+    """
+    Изменение клетки на текущем поле.
+    """
     figure = helpers.create_coordinates_tuple(horizontal, vertical, field)[-1]
 
     field[vertical][horizontal] = (
@@ -139,13 +174,15 @@ def change_back(
 
 
 def attacked_cell(coordinates: tuple, field: Field, enemy_color: str) -> bool:
-
+    """
+    Проверка: атакуемая ли врагом клетка или нет.
+    """
     for line in field:
         for cell in line:
             if (
-                not cell[-1] is None
-                and enemy_color == cell[-1].color
-                and coordinates in cell[-1].attack_cells(field)
+                    not cell[-1] is None
+                    and enemy_color == cell[-1].color
+                    and coordinates in cell[-1].attack_cells(field)
             ):
                 return True
 
@@ -153,6 +190,9 @@ def attacked_cell(coordinates: tuple, field: Field, enemy_color: str) -> bool:
 
 
 def add_figure_ways(horizontal: int, vertical: int, new_field: Field) -> None:
+    """
+    Добавление на текущее поле клеток для хода данной фигуры.
+    """
     current_color = new_field[vertical][horizontal][-1].color
 
     for coordinates in new_field[vertical][horizontal][-1].move_cells(new_field):
@@ -167,9 +207,11 @@ def add_figure_ways(horizontal: int, vertical: int, new_field: Field) -> None:
 
 
 def remove_figure_ways(horizontal, vertical, new_field: Field) -> None:
+    """
+    Удаление с текущего поля клеток для хода данной фигуры.
+    """
     for coordinates in new_field[vertical][horizontal][-1].move_cells(new_field):
         change_back(coordinates[0], coordinates[1], new_field)
-
 
 # field = Field()
 # field.create_new_field()
