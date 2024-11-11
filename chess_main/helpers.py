@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from chess_main.settings import ALPHABET, BACKS, END, FIGURE_COLOR
-from chess_main.exceptions import InputError, ColorError, NotFigureError
-from chess_main.permanent_checkers import KING
+from chess_main.exceptions import InputError, ColorError
 
 if TYPE_CHECKING:
     from chess_main.figures import Figure
@@ -20,21 +19,21 @@ def create_coordinates_tuple(
     return horizontal, vertical, field[vertical][horizontal][-1]
 
 
-def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure:
-    """
-    Изменяет старые координаты фигуры - на новые.
-    """
-    if figure.__class__.__name__ == "King":
-        KING[figure.color] = (horizontal, vertical)
-
-    if horizontal not in range(8) or vertical not in range(8):
-        raise IndexError
-    if figure is None:
-        raise NotFigureError
-
-    figure.x_coordinate = horizontal
-    figure.y_coordinate = vertical
-    return figure
+# def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure:
+#     """
+#     Изменяет старые координаты фигуры - на новые.
+#     """
+#     if figure.__class__.__name__ == "King":
+#         KING[figure.color] = (horizontal, vertical)
+#
+#     if horizontal not in range(8) or vertical not in range(8):
+#         raise IndexError
+#     if figure is None:
+#         raise NotFigureError
+#
+#     figure.x_coordinate = horizontal
+#     figure.y_coordinate = vertical
+#     return figure
 
 
 def get_enemy_color(current_color: str) -> str:

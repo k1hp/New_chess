@@ -43,14 +43,12 @@ def move_opportunity(function):
                 return result
             add_figure(self, current_field)
         except IndexError:
-            print("Errorka")
             pass
             # if enemy_figure in self.attack_cells(current_field):
             #     return [enemy_figure]
         # except IndexError:
         #     print("Атакующих фигур не найдено")
 
-        print("error")
         return function(self, current_field)
 
     return wrapper

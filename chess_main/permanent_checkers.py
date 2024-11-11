@@ -1,10 +1,10 @@
 # проверка фигуры на то, если она отойдет и будет мат, тогда мы её не можем выбрать и возбуждать исключение
 from __future__ import annotations
 
-from chess_main.field import attacked_cell, Field, remove_figure, add_figure
-
-# from functools import wraps
+from chess_main.field import attacked_cell, Field
+from chess_main.exceptions import NotFigureError
 from chess_main import helpers
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -72,7 +72,7 @@ def attacking_figures(
             if (
                     not cell[-1] is None
                     and enemy_color == cell[-1].color
-                    and figure_coordinates in cell[-1].attack_cells(current_field)
+                    and figure_coordinates in cell[-1].move_cells(current_field)
             ):
                 result.append(
                     helpers.create_coordinates_tuple(
@@ -88,3 +88,20 @@ def get_king_coordinates(current_field: Field, color: str) -> tuple[int, int, Fi
     Получение координат корля по цвету.
     """
     return helpers.create_coordinates_tuple(*KING[color], current_field)
+
+
+def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure:
+    """
+    Изменяет старые координаты фигуры - на новые.
+    """
+    if figure.__class__.__name__ == "King":
+        KING[figure.color] = (horizontal, vertical)
+
+    if horizontal not in range(8) or vertical not in range(8):
+        raise IndexError
+    if figure is None:
+        raise NotFigureError
+
+    figure.x_coordinate = horizontal
+    figure.y_coordinate = vertical
+    return figure

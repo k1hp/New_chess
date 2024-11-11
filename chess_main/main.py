@@ -22,8 +22,8 @@ def main():
     # start
     while True:
         moves.make_move(new_field, player_color)
-        player_color = helpers.change_player_color(player_color)
         enemy_color = helpers.get_enemy_color(player_color)
+        player_color = helpers.change_player_color(player_color)
         try:
             is_end = GameEnd(current_field=new_field, color=enemy_color)
             if is_end.check_all_conditions():

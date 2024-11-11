@@ -2,6 +2,7 @@ from chess_main import field
 from chess_main.exceptions import ChooseFigureError, EndOfField
 from chess_main import helpers
 from chess_main.figures import Soldier, SWAP_FIGURES, Figure
+from chess_main.permanent_checkers import change_coordinates
 
 
 class Parent:
@@ -133,7 +134,7 @@ class Actions(Parent):
             )
 
         field.add_figure(self.figure, self.field)
-        helpers.change_coordinates(horizontal, self.figure.y_coordinate, king)
+        change_coordinates(horizontal, self.figure.y_coordinate, king)
         king.moved = True
         field.add_figure(king, self.field)
 

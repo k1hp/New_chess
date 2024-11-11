@@ -359,13 +359,16 @@ def place_all_figures(current_field: Field) -> None:
     """
     Начальная расстановка фигур на поле.
     """
-    # for horizontal in range(8):
-    #     figure = START_FIGURE_PLACES[horizontal]
-    #     add_figure(figure(horizontal, 0, "black"), current_field)
-    #     add_figure(figure(horizontal, 7, "white"), current_field)
-    #
-    #     add_figure(Soldier(horizontal, 1, "black"), current_field)
-    #     add_figure(Soldier(horizontal, 6, "white"), current_field)
-    add_figure(Rook(4, 5, "white"), current_field)
-    add_figure(King(4, 0, "black"), current_field)
-    add_figure(Rook(4, 1, "black"), current_field)
+    for horizontal in range(8):
+        figure = START_FIGURE_PLACES[horizontal]
+        add_figure(figure(horizontal, 0, "black"), current_field)
+        add_figure(figure(horizontal, 7, "white"), current_field)
+
+        add_figure(Soldier(horizontal, 1, "black"), current_field)
+        add_figure(Soldier(horizontal, 6, "white"), current_field)
+    # add_figure(Rook(2, 4, "black"), current_field)
+    # add_figure(King(4, 7, "white"), current_field)
+    # add_figure(Soldier(3, 6, "white"), current_field)
+    # add_figure(Soldier(3, 7, "white"), current_field)
+    # add_figure(Soldier(5, 7, "white"), current_field)
+    # add_figure(Soldier(5, 6, "white"), current_field)
