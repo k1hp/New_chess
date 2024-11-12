@@ -1,17 +1,21 @@
-import field
-import settings
-from exceptions import ChooseFigureError, EndOfField
-import helpers
-from figures import Soldier, SWAP_FIGURES, Figure
+from chess_main import field
+from chess_main.exceptions import ChooseFigureError, EndOfField
+from chess_main import helpers
+from chess_main.figures import Soldier, SWAP_FIGURES, Figure
+from chess_main.permanent_checkers import change_coordinates
 
 
 class Parent:
+    """
+    Обобщение инициализации для наследников.
+    """
+
     def __init__(
-        self,
-        horizontal: int,
-        vertical: int,
-        current_field: field.Field,
-        current_color: str,
+            self,
+            horizontal: int,
+            vertical: int,
+            current_field: field.Field,
+            current_color: str,
     ):
         self.color = current_color
         self.horizontal = horizontal
@@ -30,7 +34,19 @@ class Moves(Parent):
         self.action = Actions(*args)
 
     def figure_ways(self):
+        """
+        Добавляет клетки, показывающие возможные ходы, на поле.
+        """
+        self.validate()
 
+        field.add_figure_ways(*self.parameters_set)
+        self.field.print_field()
+        field.remove_figure_ways(*self.parameters_set)
+
+    def validate(self):
+        """
+        Проверяет дополнительные условия выбора клетки
+        """
         if self.figure is None:
             raise ChooseFigureError("На выбранном поле отсутствует фигура")
         elif self.figure.color != self.color:
@@ -42,11 +58,10 @@ class Moves(Parent):
         else:
             pass
 
-        field.add_figure_ways(*self.parameters_set)
-        self.field.print_field()
-        field.remove_figure_ways(*self.parameters_set)
-
     def make_action(self, guiding_coordinates: tuple[int, int, Figure]) -> None:
+        """
+        Произвести действие в зависимости от выбранной клетки (фигуры, если есть).
+        """
         attacked_figure = guiding_coordinates[-1]
 
         if attacked_figure is None or self.color != attacked_figure.color:
@@ -63,8 +78,14 @@ class Moves(Parent):
 
 
 class Actions(Parent):
+    """
+    Конкретные действия, которые вызываются из Moves.
+    """
 
     def replace_soldier(self) -> None:
+        """
+        Замена пешки на друугую фигуру, при достижении конца поля.
+        """
         figure_class = SWAP_FIGURES[
             input(
                 "Введите название фигуры, на которую хотите заменить пешку (rook, knight, queen, bishop): "
@@ -74,13 +95,28 @@ class Actions(Parent):
         field.add_figure(figure, self.field)
 
     def relocate(self, guiding_coordinates: tuple[int, int, Figure]) -> None:
+        """
+        Переместить фигуру на выранную позицию.
+
+        :param guiding_coordinates: координаты позиции для перемещения
+        """
         if hasattr(self.figure, "moved"):
             self.figure.moved = True
+
         field.remove_figure(self.figure, self.field)
         self.figure.x_coordinate, self.figure.y_coordinate = guiding_coordinates[0:2]
         field.add_figure(self.figure, self.field)
 
+        # if isinstance(self.figure, King):
+        # KING[self.figure.color] = (
+        #     self.figure.x_coordinate,
+        #     self.figure.y_coordinate,
+        # )
+
     def castling(self, king_coordinates: tuple[int, int, Figure]) -> None:
+        """
+        Произвести рокировку.
+        """
         horizontal = king_coordinates[0]
         king = king_coordinates[-1]
         field.remove_figure(self.figure, self.field)
@@ -98,12 +134,21 @@ class Actions(Parent):
             )
 
         field.add_figure(self.figure, self.field)
-        helpers.change_coordinates(horizontal, self.figure.y_coordinate, king)
+        change_coordinates(horizontal, self.figure.y_coordinate, king)
         king.moved = True
         field.add_figure(king, self.field)
 
+        # if isinstance(king, King):
+        #     KING[self.figure.color] = (horizontal, self.figure.y_coordinate)
+
 
 def make_move(current_field: field.Field, color: str) -> None:
+    """
+    Вся логика одного хода.
+
+    :param current_field: объект текущего поля
+    :param color: текущий цвет фигур
+    """
     while True:
         try:
             horizontal, vertical = helpers.choose_cell()

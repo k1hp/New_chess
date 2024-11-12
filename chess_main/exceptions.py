@@ -34,6 +34,11 @@ class InputError(Exception):
     pass
 
 
+class EndOfGame(Exception):
+    def __str__(self):
+        return "Конец игры"
+
+
 class MovesErrors(Exception):
     pass
 
