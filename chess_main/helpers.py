@@ -71,6 +71,9 @@ def choose_cell() -> tuple[int, int]:
         try:
             input_coordinates = input("Введие клетку (например: A1): ")
 
+            if len(input_coordinates) != 2:
+                raise InputError("Должно быть передано два символа")
+
             if not input_coordinates[-1].isdigit():
                 raise InputError("Первый символ - буква, а второй - цифра")
 

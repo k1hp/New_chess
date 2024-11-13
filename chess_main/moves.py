@@ -167,6 +167,11 @@ def make_move(current_field: field.Field, color: str) -> None:
                 coordinates = helpers.create_coordinates_tuple(
                     horizontal, vertical, current_field
                 )
+
+                if (horizontal, vertical) == (move.figure.x_coordinate, move.figure.y_coordinate):
+                    current_field.print_field()
+                    return make_move(current_field, color)
+
                 if coordinates in move.figure.move_cells(current_field):
                     break
 

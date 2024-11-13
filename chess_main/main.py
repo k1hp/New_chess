@@ -8,7 +8,7 @@ from chess_main.ends_of_game import GameEnd
 
 def main():
     # player_color = random.choice(tuple(FIGURE_COLOR))
-    player_color = "black"
+    player_color = "white"
 
     new_field = field.Field()
     new_field.create_new_field()
