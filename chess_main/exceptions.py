@@ -4,7 +4,7 @@ class FieldErrors(Exception):
 
 class BackColorError(FieldErrors):
     def __str__(self):
-        return "Неверно указан цвет клетки, возможно только: black, white, green, red"
+        return "Неверно указан цвет клетки, возможно только: black, white, green, red, blue"
 
 
 class FigureSymbolError(FieldErrors):
