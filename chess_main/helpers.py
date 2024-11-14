@@ -11,29 +11,12 @@ if TYPE_CHECKING:
 
 
 def create_coordinates_tuple(
-        horizontal: int, vertical: int, field: Field
+    horizontal: int, vertical: int, field: Field
 ) -> tuple[int, int, Figure]:
     """
     Из координат создает кортеж, который используется далее.
     """
     return horizontal, vertical, field[vertical][horizontal][-1]
-
-
-# def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure:
-#     """
-#     Изменяет старые координаты фигуры - на новые.
-#     """
-#     if figure.__class__.__name__ == "King":
-#         KING[figure.color] = (horizontal, vertical)
-#
-#     if horizontal not in range(8) or vertical not in range(8):
-#         raise IndexError
-#     if figure is None:
-#         raise NotFigureError
-#
-#     figure.x_coordinate = horizontal
-#     figure.y_coordinate = vertical
-#     return figure
 
 
 def get_enemy_color(current_color: str) -> str:
@@ -74,7 +57,10 @@ def choose_cell() -> tuple[int, int]:
             if len(input_coordinates) != 2:
                 raise InputError("Должно быть передано два символа")
 
-            if not input_coordinates[-1].isdigit():
+            if (
+                not input_coordinates[-1].isdigit()
+                or not input_coordinates[0].isalpha()
+            ):
                 raise InputError("Первый символ - буква, а второй - цифра")
 
             letter = input_coordinates[0].lower()

@@ -14,7 +14,7 @@ from chess_main.field import GetColor
         (1, 2, "yellow", "yellow"),
     ],
 )
-def test_GetColor_back(horizontal, vertical, back_color, result):
+def test_GetColor_set_back(horizontal, vertical, back_color, result):
     color = GetColor(horizontal, vertical)
     color.set_back_color(back_color)
     assert color.back_color == result
@@ -28,7 +28,7 @@ def test_GetColor_back(horizontal, vertical, back_color, result):
         (2, 3, "1234565", "1234565"),
     ],
 )
-def test_GetColor_back_exceptions(horizontal, vertical, back_color, result):
+def test_GetColor_set_back_fail(horizontal, vertical, back_color, result):
     with pytest.raises(BackColorError) as exc:
         color = GetColor(horizontal, vertical)
         color.set_back_color(back_color)
@@ -44,7 +44,7 @@ def test_GetColor_back_exceptions(horizontal, vertical, back_color, result):
         (7, 4, "green", "green"),
     ],
 )
-def test_GetColor_figure(horizontal, vertical, figure_color, result):
+def test_GetColor_set_figure(horizontal, vertical, figure_color, result):
     color = GetColor(horizontal, vertical)
     color.set_figure_color(figure_color)
     assert color.figure_color == result
@@ -60,7 +60,7 @@ def test_GetColor_figure(horizontal, vertical, figure_color, result):
         (7, 4, "green", "green"),
     ],
 )
-def test_GetColor_figure_exceptions(horizontal, vertical, figure_color, result):
+def test_GetColor_set_figure_fail(horizontal, vertical, figure_color, result):
     with pytest.raises(FigureColorError) as exc:
         color = GetColor(horizontal, vertical)
         color.set_figure_color(figure_color)
