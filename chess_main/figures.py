@@ -8,6 +8,10 @@ from chess_main.decorators import move_opportunity
 
 
 class Figure(ABC):
+    @property
+    @abstractmethod
+    def symbol(self): ...
+
     def __init__(self, x_coordinate: int, y_coordinate: int, color: str):
         if color not in FIGURE_COLOR:
             raise exceptions.FigureColorError
@@ -52,7 +56,7 @@ class Soldier(Figure):
         braker = False
 
         for horizontal, cell in enumerate(
-                current_field[vertical][start: end + 1], start=start
+            current_field[vertical][start : end + 1], start=start
         ):
             if cell[-1] is None and horizontal == self.x_coordinate:
                 result.append((horizontal, vertical, None))
@@ -64,10 +68,10 @@ class Soldier(Figure):
                 result.append((horizontal, vertical, cell[-1]))
 
         if (
-                not self.moved
-                and not braker
-                and current_field[self.get_vertical(action=1)][self.x_coordinate][-1]  ##
-                is None
+            not self.moved
+            and not braker
+            and current_field[self.get_vertical(action=1)][self.x_coordinate][-1]  ##
+            is None
         ):
             result.append((self.x_coordinate, self.get_vertical(action=1), None))
 
@@ -147,7 +151,7 @@ class King(Figure):
                 if abs(horizontal - self.x_coordinate) <= 1
                 and abs(vertical - self.y_coordinate) <= 1
                 and not (
-                        horizontal == self.x_coordinate and vertical == self.y_coordinate
+                    horizontal == self.x_coordinate and vertical == self.y_coordinate
                 )
             )
 
@@ -169,11 +173,11 @@ class Rook(Figure):
                     True
                     if coordinates[-1] is None
                     else coordinates[-1].color != self.color
-                         or (
-                                 isinstance(coordinates[-1], King)
-                                 and coordinates[-1].color == self.color
-                                 and self.can_castling(current_field)
-                         )
+                    or (
+                        isinstance(coordinates[-1], King)
+                        and coordinates[-1].color == self.color
+                        and self.can_castling(current_field)
+                    )
                 ),
                 self.attack_cells(current_field),
             )
@@ -188,26 +192,26 @@ class Rook(Figure):
 
         for vertical, line in enumerate(current_field):
             if (
-                    not line[self.x_coordinate][-1] is None
-                    and start_vertical < vertical < self.y_coordinate
+                not line[self.x_coordinate][-1] is None
+                and start_vertical < vertical < self.y_coordinate
             ):
                 start_vertical = vertical
             elif (
-                    not line[self.x_coordinate][-1] is None
-                    and end_vertical > vertical > self.y_coordinate
+                not line[self.x_coordinate][-1] is None
+                and end_vertical > vertical > self.y_coordinate
             ):
                 end_vertical = vertical
 
             if vertical == self.y_coordinate:
                 for horizontal, cell in enumerate(line):
                     if (
-                            not cell[-1] is None
-                            and start_horizontal < horizontal < self.x_coordinate
+                        not cell[-1] is None
+                        and start_horizontal < horizontal < self.x_coordinate
                     ):
                         start_horizontal = horizontal
                     elif (
-                            not cell[-1] is None
-                            and end_horizontal > horizontal > self.x_coordinate
+                        not cell[-1] is None
+                        and end_horizontal > horizontal > self.x_coordinate
                     ):
                         end_horizontal = horizontal
 
@@ -238,7 +242,7 @@ class Rook(Figure):
             king = next(
                 filter(
                     lambda coordinates: isinstance(coordinates[-1], King)
-                                        and coordinates[-1].color == self.color,
+                    and coordinates[-1].color == self.color,
                     self.attack_cells(current_field),
                 )
             )
@@ -258,7 +262,7 @@ class Rook(Figure):
                 horizontal, vertical, current_field
             )
             if attacked_cell(
-                    coordinates=coordinates, field=current_field, enemy_color=enemy_color
+                coordinates=coordinates, field=current_field, enemy_color=enemy_color
             ):
                 return False
 
@@ -314,11 +318,11 @@ class Knight(Figure):
         for vertical, line in enumerate(current_field):
             for horizontal, cell in enumerate(line):
                 if (
-                        abs(self.x_coordinate - horizontal) == 2
-                        and abs(self.y_coordinate - vertical) == 1
+                    abs(self.x_coordinate - horizontal) == 2
+                    and abs(self.y_coordinate - vertical) == 1
                 ) or (
-                        abs(self.x_coordinate - horizontal) == 1
-                        and abs(self.y_coordinate - vertical) == 2
+                    abs(self.x_coordinate - horizontal) == 1
+                    and abs(self.y_coordinate - vertical) == 2
                 ):
                     result.append(
                         helpers.create_coordinates_tuple(

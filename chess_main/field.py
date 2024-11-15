@@ -4,7 +4,6 @@ from chess_main import exceptions
 from chess_main import helpers
 from typing import TYPE_CHECKING
 
-# import figures
 from chess_main.settings import (
     FIGURE_COLOR,
     BACKS,
@@ -99,8 +98,7 @@ class Field(list):
 
     def print_field(self, reverse=False) -> None:
         length = reversed(range(len(self))) if reverse else range(len(self))
-        # for index in length:
-        #     print(*map(lambda item: item[0], self[index]), sep="")
+
         helpers.print_alphabet()
         for index in length:
             print(f" {DIGITS[index]} ", end="")
@@ -119,6 +117,8 @@ def create_cell(
     """
     Создание клетки.
     """
+    if x_coordinate not in range(8) or y_coordinate not in range(8):
+        raise IndexError
     color = GetColor(x_coordinate, y_coordinate)
     if not figure_color is None:
         color.set_figure_color(figure_color)
@@ -173,7 +173,9 @@ def change_back(
     )
 
 
-def attacked_cell(coordinates: tuple, field: Field, enemy_color: str) -> bool:
+def attacked_cell(
+    coordinates: tuple[int, int, Figure | None], field: Field, enemy_color: str
+) -> bool:
     """
     Проверка: атакуемая ли врагом клетка или нет.
     """
@@ -206,20 +208,9 @@ def add_figure_ways(horizontal: int, vertical: int, new_field: Field) -> None:
         change_back(coordinates[0], coordinates[1], new_field, back_color)
 
 
-def remove_figure_ways(horizontal, vertical, new_field: Field) -> None:
+def remove_figure_ways(horizontal: int, vertical: int, new_field: Field) -> None:
     """
     Удаление с текущего поля клеток для хода данной фигуры.
     """
     for coordinates in new_field[vertical][horizontal][-1].move_cells(new_field):
         change_back(coordinates[0], coordinates[1], new_field)
-
-
-# field = Field()
-# field.create_new_field()
-#
-# add_figure(figures.Soldier(0, 0, "black"), field)
-# field.print_field()
-# print()
-# field.print_field(reverse=True)
-
-# print(BACKS["white"] + "   " + Style.RESET_ALL)

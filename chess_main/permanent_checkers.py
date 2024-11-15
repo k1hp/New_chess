@@ -34,33 +34,10 @@ def check_shah(current_field: Field, color: str) -> bool:
     return attacked_cell(king_coordinates, current_field, enemy_color)
 
 
-# def move_opportunity(function):
-#     @wraps(function)
-#     def wrapper(self, current_field: Field) -> list:
-#         try:
-#             king_coordinates = get_king_coordinates(current_field, self.color)
-#             enemy_figure = attacking_figures(
-#                 king_coordinates, current_field, helpers.get_enemy_color(self.color)
-#             )[0]
-#             if enemy_figure in self.attack_cells(current_field):
-#                 return [enemy_figure]
-#         except IndexError:
-#             print("Атакующих фигур не найдено")
-#
-#         remove_figure(self, current_field)
-#         result = check_shah(current_field, self.color)
-#         add_figure(self, current_field)
-#         if result:
-#             return []
-#         return function(self, current_field)
-#
-#     return wrapper
-
-
 def attacking_figures(
-        figure_coordinates: tuple[int, int, Figure | None],
-        current_field: Field,
-        enemy_color: str,
+    figure_coordinates: tuple[int, int, Figure | None],
+    current_field: Field,
+    enemy_color: str,
 ) -> list:
     """
     Список фигур, атакующих данную позицию.
@@ -70,9 +47,9 @@ def attacking_figures(
     for vertical, line in enumerate(current_field):
         for horizontal, cell in enumerate(line):
             if (
-                    not cell[-1] is None
-                    and enemy_color == cell[-1].color
-                    and figure_coordinates in cell[-1].move_cells(current_field)
+                not cell[-1] is None
+                and enemy_color == cell[-1].color
+                and figure_coordinates in cell[-1].move_cells(current_field)
             ):
                 result.append(
                     helpers.create_coordinates_tuple(
