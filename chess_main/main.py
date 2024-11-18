@@ -7,17 +7,13 @@ from chess_main.ends_of_game import GameEnd
 
 
 def main():
-    # player_color = random.choice(tuple(FIGURE_COLOR))
-    player_color = "black"
+    player_color = "white"
 
     new_field = field.Field()
     new_field.create_new_field()
     figures.place_all_figures(new_field)
 
     new_field.print_field()
-    # print()
-    # new_field.print_field(reverse=True)
-    # print()
 
     # start
     while True:
@@ -27,14 +23,10 @@ def main():
         try:
             is_end = GameEnd(current_field=new_field, color=enemy_color)
             if is_end.check_all_conditions():
-                print("END OF GAME")
                 break
         except IndexError:
             continue
 
 
-# должна быть постоянная проверка на то, что атакуют короля
-
 if __name__ == "__main__":
     main()
-# в конце нужно написать тесты

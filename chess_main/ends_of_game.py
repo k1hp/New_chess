@@ -218,7 +218,6 @@ class Blockers:
                 if x == king_horizontal and y == king_vertical:
                     return result
 
-                # Проверяем, не вышли ли мы за пределы доски
                 if not (
                     0 <= x < len(self.current_field[0])
                     and 0 <= y < len(self.current_field)

@@ -293,7 +293,6 @@ class Bishop(Figure):
                 x += direction[0]
                 y += direction[1]
 
-                # Проверяем, не вышли ли мы за пределы доски
                 if not (0 <= x < len(current_field[0]) and 0 <= y < len(current_field)):
                     break
 
@@ -372,7 +371,7 @@ def place_all_figures(current_field: Field) -> None:
     """
     add_figure(Soldier(3, 1, "black"), current_field)
     add_figure(Soldier(4, 1, "black"), current_field)
-    add_figure(Rook(5, 0, "black"), current_field)
+    add_figure(Bishop(5, 0, "black"), current_field)
     add_figure(Soldier(3, 0, "black"), current_field)
     add_figure(King(4, 0, "black"), current_field)
     add_figure(Bishop(6, 2, "white"), current_field)

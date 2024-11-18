@@ -1,4 +1,3 @@
-# проверка фигуры на то, если она отойдет и будет мат, тогда мы её не можем выбрать и возбуждать исключение
 from __future__ import annotations
 
 from chess_main.exceptions import NotFigureError
@@ -80,5 +79,4 @@ def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure
 
     figure.x_coordinate = horizontal
     figure.y_coordinate = vertical
-    print(KING)
     return figure

@@ -69,12 +69,6 @@ class Moves(Parent):
 
         elif self.color == attacked_figure.color:
             self.action.castling(guiding_coordinates)
-            # вызов castling
-
-    # если None то просто ходим
-    # если figure color == current значит это король и мы направляем в castling
-    # если figure color != current значит направляем в kill
-    # если исключение EndOfField значит это пешка replace_soldier
 
 
 class Actions(Parent):
@@ -104,15 +98,8 @@ class Actions(Parent):
             self.figure.moved = True
 
         field.remove_figure(self.figure, self.field)
-        # self.figure.x_coordinate, self.figure.y_coordinate = guiding_coordinates[0:2]
         change_coordinates(*guiding_coordinates[0:2], self.figure)
         field.add_figure(self.figure, self.field)
-
-        # if isinstance(self.figure, King):
-        # KING[self.figure.color] = (
-        #     self.figure.x_coordinate,
-        #     self.figure.y_coordinate,
-        # )
 
     def castling(self, king_coordinates: tuple[int, int, Figure]) -> None:
         """
@@ -139,9 +126,6 @@ class Actions(Parent):
         king.moved = True
         field.add_figure(king, self.field)
 
-        # if isinstance(king, King):
-        #     KING[self.figure.color] = (horizontal, self.figure.y_coordinate)
-
 
 def make_move(current_field: field.Field, color: str) -> None:
     """
@@ -155,7 +139,6 @@ def make_move(current_field: field.Field, color: str) -> None:
             horizontal, vertical = helpers.choose_cell()
             move = Moves(horizontal, vertical, current_field, color)
             move.figure_ways()
-            # current_field.print_field()
         except ChooseFigureError as exc:
             exc.print_error()
         except EndOfField:
