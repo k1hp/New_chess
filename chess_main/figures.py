@@ -20,8 +20,7 @@ class Figure(ABC):
         self.y_coordinate = y_coordinate
         self.color = color
 
-    @abstractmethod
-    def move_cells(self, current_field: Field) -> list:
+    def filter_attack_cells(self, current_field: Field) -> list:
         return list(
             filter(
                 lambda coordinates: (
@@ -34,7 +33,10 @@ class Figure(ABC):
         )
 
     @abstractmethod
-    def attack_cells(self, current_field: Field) -> list: ...
+    def move_cells(self): ...
+
+    @abstractmethod
+    def attack_cells(self): ...
 
 
 class Soldier(Figure):
@@ -115,7 +117,7 @@ class King(Figure):
         self.moved = False
 
     def move_cells(self, current_field: Field) -> list:
-        result = super().move_cells(current_field)
+        result = super().filter_attack_cells(current_field)
         return self.full_check_move(current_field, result)
 
     def full_check_move(self, current_field: Field, result: list = None) -> list:
@@ -274,7 +276,7 @@ class Bishop(Figure):
 
     @move_opportunity
     def move_cells(self, current_field: Field) -> list:
-        return super().move_cells(current_field)
+        return super().filter_attack_cells(current_field)
 
     def attack_cells(self, current_field: Field) -> list:
         result = []
@@ -310,7 +312,7 @@ class Knight(Figure):
 
     @move_opportunity
     def move_cells(self, current_field: Field) -> list:
-        return super().move_cells(current_field)
+        return super().filter_attack_cells(current_field)
 
     def attack_cells(self, current_field: Field) -> list:
         result = []
@@ -337,7 +339,7 @@ class Queen(Figure):
 
     @move_opportunity
     def move_cells(self, current_field: Field) -> list:
-        return super().move_cells(current_field)
+        return super().filter_attack_cells(current_field)
 
     def attack_cells(self, current_field: Field) -> list:
         return Rook.attack_cells(self, current_field) + Bishop.attack_cells(
