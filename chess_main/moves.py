@@ -104,7 +104,8 @@ class Actions(Parent):
             self.figure.moved = True
 
         field.remove_figure(self.figure, self.field)
-        self.figure.x_coordinate, self.figure.y_coordinate = guiding_coordinates[0:2]
+        # self.figure.x_coordinate, self.figure.y_coordinate = guiding_coordinates[0:2]
+        change_coordinates(*guiding_coordinates[0:2], self.figure)
         field.add_figure(self.figure, self.field)
 
         # if isinstance(self.figure, King):

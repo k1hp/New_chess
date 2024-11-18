@@ -341,9 +341,14 @@ class Queen(Figure):
     def move_cells(self, current_field: Field) -> list:
         return super().filter_attack_cells(current_field)
 
+    def create_additional(self):
+        self.rook = Rook(self.x_coordinate, self.y_coordinate, self.color)
+        self.bishop = Bishop(self.x_coordinate, self.y_coordinate, self.color)
+
     def attack_cells(self, current_field: Field) -> list:
-        return Rook.attack_cells(self, current_field) + Bishop.attack_cells(
-            self, current_field
+        self.create_additional()
+        return self.rook.attack_cells(current_field) + self.bishop.attack_cells(
+            current_field
         )
 
 

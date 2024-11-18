@@ -80,4 +80,5 @@ def change_coordinates(horizontal: int, vertical: int, figure: Figure) -> Figure
 
     figure.x_coordinate = horizontal
     figure.y_coordinate = vertical
+    print(KING)
     return figure
