@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from chess_main.exceptions import EndOfGame
-from chess_main.helpers import print_error, create_coordinates_tuple, get_enemy_color
+from chess_main.helpers import create_coordinates_tuple, get_enemy_color
 from chess_main.permanent_checkers import (
     check_shah,
     attacking_figures,
@@ -76,18 +76,17 @@ class GameEnd(ShahChecker):
         except IndexError:
             pass
 
-    def stalemate(self):
-        ...
+    def stalemate(self): ...
 
     def draw(self):
         set_fgs = {"Knight", "Bishop"}
         if len(self.all_figures["black"]) == 1 and len(self.all_figures["white"]) == 1:
             raise EndOfGame("Draw Game")
         if (
-                len(self.all_figures["black"]) == 2
-                and len(self.all_figures["white"]) == 2
-                and set_fgs.intersection(self.all_figures["black"])
-                and set_fgs.intersection(self.all_figures["white"])
+            len(self.all_figures["black"]) == 2
+            and len(self.all_figures["white"]) == 2
+            and set_fgs.intersection(self.all_figures["black"])
+            and set_fgs.intersection(self.all_figures["white"])
         ):
             raise EndOfGame("Draw Game")
 
@@ -102,7 +101,7 @@ class GameEnd(ShahChecker):
             self.stalemate()
             self.draw()
         except EndOfGame as exc:
-            print_error(exc.__str__())
+            exc.print_error()
             return "EndOfGame"
 
 
@@ -162,8 +161,8 @@ class Blockers:
 
         if enemy_horizontal == king_horizontal:
             for coordinate in range(
-                    min(enemy_vertical, king_vertical),
-                    max(enemy_vertical, king_vertical) + 1,
+                min(enemy_vertical, king_vertical),
+                max(enemy_vertical, king_vertical) + 1,
             ):
                 if coordinate == king_vertical:
                     continue
@@ -175,8 +174,8 @@ class Blockers:
 
         elif enemy_vertical == king_vertical:
             for coordinate in range(
-                    min(enemy_horizontal, king_horizontal),
-                    max(enemy_horizontal, king_horizontal) + 1,
+                min(enemy_horizontal, king_horizontal),
+                max(enemy_horizontal, king_horizontal) + 1,
             ):
                 if coordinate == king_horizontal:
                     continue

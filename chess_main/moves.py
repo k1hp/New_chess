@@ -11,11 +11,11 @@ class Parent:
     """
 
     def __init__(
-            self,
-            horizontal: int,
-            vertical: int,
-            current_field: field.Field,
-            current_color: str,
+        self,
+        horizontal: int,
+        vertical: int,
+        current_field: field.Field,
+        current_color: str,
     ):
         self.color = current_color
         self.horizontal = horizontal
@@ -156,7 +156,7 @@ def make_move(current_field: field.Field, color: str) -> None:
             move.figure_ways()
             # current_field.print_field()
         except ChooseFigureError as exc:
-            helpers.print_error(str(exc))
+            exc.print_error()
         except EndOfField:
             action = Actions(horizontal, vertical, current_field, color)
             action.replace_soldier()
@@ -168,7 +168,10 @@ def make_move(current_field: field.Field, color: str) -> None:
                     horizontal, vertical, current_field
                 )
 
-                if (horizontal, vertical) == (move.figure.x_coordinate, move.figure.y_coordinate):
+                if (horizontal, vertical) == (
+                    move.figure.x_coordinate,
+                    move.figure.y_coordinate,
+                ):
                     current_field.print_field()
                     return make_move(current_field, color)
 

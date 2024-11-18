@@ -1,7 +1,6 @@
 # проверка фигуры на то, если она отойдет и будет мат, тогда мы её не можем выбрать и возбуждать исключение
 from __future__ import annotations
 
-from chess_main.field import attacked_cell, Field
 from chess_main.exceptions import NotFigureError
 from chess_main import helpers
 
@@ -31,7 +30,7 @@ def check_shah(current_field: Field, color: str) -> bool:
         king[0], king[-1], current_field
     )
 
-    return attacked_cell(king_coordinates, current_field, enemy_color)
+    return helpers.attacked_cell(king_coordinates, current_field, enemy_color)
 
 
 def attacking_figures(

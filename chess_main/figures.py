@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from chess_main.settings import FIGURE_COLOR, SWAP_FIGURES_NAMES
 from chess_main import exceptions
-from chess_main.field import Field, attacked_cell, add_figure, remove_figure
+from chess_main.field import Field, add_figure, remove_figure
 from chess_main import helpers
 from chess_main.decorators import move_opportunity
 
@@ -134,7 +134,7 @@ class King(Figure):
         result = list(
             filter(
                 lambda coordinates: (
-                    not attacked_cell(
+                    not helpers.attacked_cell(
                         coordinates, current_field, helpers.get_enemy_color(self.color)
                     )
                 ),
@@ -263,7 +263,7 @@ class Rook(Figure):
             coordinates = helpers.create_coordinates_tuple(
                 horizontal, vertical, current_field
             )
-            if attacked_cell(
+            if helpers.attacked_cell(
                 coordinates=coordinates, field=current_field, enemy_color=enemy_color
             ):
                 return False

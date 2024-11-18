@@ -107,26 +107,7 @@ class Field(list):
         helpers.print_alphabet()
 
 
-def create_cell(
-    x_coordinate: int,
-    y_coordinate: int,
-    back_color: str | None = None,
-    figure_color: str | None = None,
-    figure_symbol: str | None = None,
-) -> str:
-    """
-    Создание клетки.
-    """
-    if x_coordinate not in range(8) or y_coordinate not in range(8):
-        raise IndexError
-    color = GetColor(x_coordinate, y_coordinate)
-    if not figure_color is None:
-        color.set_figure_color(figure_color)
-    color.set_back_color(back_color)
-    colored_position = GetColoredPosition()
-    return colored_position.get_position(color, figure_symbol)
-
-
+# class ManageFigure:
 def add_figure(figure: Figure, field: Field) -> None:
     """
     Добавление фигуры на данное поле по ее координатам.
@@ -153,6 +134,26 @@ def remove_figure(figure: Figure, field: Field) -> None:
     )
 
 
+def create_cell(
+    x_coordinate: int,
+    y_coordinate: int,
+    back_color: str | None = None,
+    figure_color: str | None = None,
+    figure_symbol: str | None = None,
+) -> str:
+    """
+    Создание клетки.
+    """
+    if x_coordinate not in range(8) or y_coordinate not in range(8):
+        raise IndexError
+    color = GetColor(x_coordinate, y_coordinate)
+    if not figure_color is None:
+        color.set_figure_color(figure_color)
+    color.set_back_color(back_color)
+    colored_position = GetColoredPosition()
+    return colored_position.get_position(color, figure_symbol)
+
+
 def change_back(
     horizontal: int, vertical: int, field: Field, back_color: str | None = None
 ) -> None:
@@ -173,24 +174,7 @@ def change_back(
     )
 
 
-def attacked_cell(
-    coordinates: tuple[int, int, Figure | None], field: Field, enemy_color: str
-) -> bool:
-    """
-    Проверка: атакуемая ли врагом клетка или нет.
-    """
-    for line in field:
-        for cell in line:
-            if (
-                not cell[-1] is None
-                and enemy_color == cell[-1].color
-                and coordinates in cell[-1].attack_cells(field)
-            ):
-                return True
-
-    return False
-
-
+# class ManageWays:
 def add_figure_ways(horizontal: int, vertical: int, new_field: Field) -> None:
     """
     Добавление на текущее поле клеток для хода данной фигуры.

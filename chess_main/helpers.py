@@ -96,3 +96,21 @@ def print_alphabet() -> None:
     """
     print("   ", end="")
     print(*map(lambda letter: f" {letter.upper()} ", ALPHABET), sep="")
+
+
+def attacked_cell(
+    coordinates: tuple[int, int, Figure | None], field: Field, enemy_color: str
+) -> bool:
+    """
+    Проверка: атакуемая ли врагом клетка или нет.
+    """
+    for line in field:
+        for cell in line:
+            if (
+                not cell[-1] is None
+                and enemy_color == cell[-1].color
+                and coordinates in cell[-1].attack_cells(field)
+            ):
+                return True
+
+    return False

@@ -1,4 +1,12 @@
-class FieldErrors(Exception):
+from chess_main.settings import BACKS, END
+
+
+class ChessException(Exception):
+    def print_error(self):
+        print(BACKS["red"] + self.__str__() + END)
+
+
+class FieldErrors(ChessException):
     pass
 
 
@@ -12,7 +20,7 @@ class FigureSymbolError(FieldErrors):
         return "Неверно указан символ фигуры"
 
 
-class FigureErrors(Exception):
+class FigureErrors(ChessException):
     pass
 
 
@@ -30,16 +38,16 @@ class EndOfField(FigureErrors):
     pass
 
 
-class InputError(Exception):
+class InputError(ChessException):
     pass
 
 
-class EndOfGame(Exception):
+class EndOfGame(ChessException):
     def __str__(self):
         return "Конец игры"
 
 
-class MovesErrors(Exception):
+class MovesErrors(ChessException):
     pass
 
 
@@ -47,7 +55,7 @@ class ChooseFigureError(MovesErrors):
     pass
 
 
-class ColorError(Exception):
+class ColorError(ChessException):
     def __str__(self):
         return "Был неверно указан цвет"
 
