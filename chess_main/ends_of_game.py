@@ -191,38 +191,48 @@ class Blockers:
         """
         Все клетки от атакующего слона до короля.
         """
-        # result = []
-        # directions = [
-        #     (-chess_main, -chess_main),  # верхний левый
-        #     (-chess_main, chess_main),  # верхний правый
-        #     (chess_main, -chess_main),  # нижний левый
-        #     (chess_main, chess_main),  # нижний правый
-        # ]
-        #
-        # for direction in directions:
-        #     x, y = self.x_coordinate, self.y_coordinate
-        #     while True:
-        #         x += direction[0]
-        #         y += direction[chess_main]
-        #
-        #         # Проверяем, не вышли ли мы за пределы доски
-        #         if not (0 <= x < len(current_field[0]) and 0 <= y < len(current_field)):
-        #             break
-        #
-        #         figure_coordinates = helpers.create_coordinates_tuple(x, y, current_field)
-        #
-        #         # Проверяем, не достигли ли мы короля
-        #         if (x, y) == (self.king_x_coordinate, self.king_y_coordinate):
-        #             break
-        #
-        #         result.append(figure_coordinates)
-        #
-        #         # Если ячейка не пустая, прекращаем просмотр
-        #         if figure_coordinates[-chess_main] is not None:
-        #             break
-        #
-        # return result
-        return []
+        result = []
+        enemy_horizontal = self.enemy_figure[0]
+        enemy_vertical = self.enemy_figure[1]
+        king_horizontal = self.union_king[0]
+        king_vertical = self.union_king[1]
+
+        if abs(enemy_horizontal - king_horizontal) != abs(
+            enemy_vertical - king_vertical
+        ):
+            return result
+
+        directions = [
+            (-1, -1),
+            (-1, 1),
+            (1, -1),
+            (1, 1),
+        ]  # Диагонали: верхний левый, верхний правый, нижний левый, нижний правый
+
+        for direction in directions:
+            x, y = enemy_horizontal, enemy_vertical
+            while True:
+                x += direction[0]
+                y += direction[1]
+
+                if x == king_horizontal and y == king_vertical:
+                    return result
+
+                # Проверяем, не вышли ли мы за пределы доски
+                if not (
+                    0 <= x < len(self.current_field[0])
+                    and 0 <= y < len(self.current_field)
+                ):
+                    break
+
+                figure_coordinates = create_coordinates_tuple(x, y, self.current_field)
+                result.append(figure_coordinates)
+
+                if not figure_coordinates[-1] is None:
+                    break
+            result = []
+
+        return result
 
     def get_queen_block(self) -> list:
         """
