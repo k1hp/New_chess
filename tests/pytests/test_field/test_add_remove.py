@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 
 from chess_main.field import remove_figure, add_figure_ways, remove_figure_ways, Field
-from tests.conftest import second_figures_placement
+from tests.pytests.conftest import second_figures_placement
 from copy import deepcopy
 
 

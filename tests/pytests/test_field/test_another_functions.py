@@ -4,7 +4,7 @@ from chess_main.field import create_cell, change_back, attacked_cell
 from chess_main.helpers import create_coordinates_tuple
 from chess_main.settings import BACKS, END, FIGURE_COLOR, HALF_SPACE
 
-from tests.conftest import first_figures_placement
+from tests.pytests.conftest import first_figures_placement
 
 
 @pytest.mark.parametrize(
