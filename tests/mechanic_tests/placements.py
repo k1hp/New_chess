@@ -1,5 +1,7 @@
 from chess_main.field import Field, add_figure
-from chess_main.figures import King, Rook, Soldier
+from chess_main.figures import King, Rook, Soldier, Bishop
+from chess_main.permanent_checkers import change_coordinates, KING
+from chess_main.helpers import get_enemy_color
 
 
 class DoPlacement:
@@ -17,4 +19,30 @@ class DoPlacement:
         if not self.figure is None:
             add_figure(Soldier(*self.figure, self.color), current_field)
 
-    def get_shah_placement(self, current_field): ...
+    def get_shah_placement(self):
+        placements = ShahPlacements(self.color)
+        return (
+            placements.first_shah_placement,
+            placements.second_shah_placement,
+            placements.third_shah_placement,
+        )
+
+
+class ShahPlacements:
+    def __init__(self, color):
+        self.color = color
+        self.enemy_color = get_enemy_color(color)
+
+    def change_king_coordinates(self, horizontal, vertical, current_field: Field):
+        king = King(horizontal, vertical, "black")
+        add_figure(king, current_field)
+        change_coordinates(king.x_coordinate, king.y_coordinate, king)
+
+    def first_shah_placement(self, current_field: Field):
+        self.change_king_coordinates(0, 0, current_field)
+        add_figure(Bishop(3, 3, "white"), current_field)
+        add_figure(Rook(1, 0, "black"), current_field)
+        add_figure(Soldier(0, 1, "black"), current_field)
+
+    def second_shah_placement(self, current_field: Field): ...
+    def third_shah_placement(self, current_field: Field): ...

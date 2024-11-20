@@ -1,9 +1,9 @@
-from chess_main.settings import BACKS, END
+from chess_main.settings import BACKS, END, BLACK_FIGURE
 
 
 class ChessException(Exception):
     def print_error(self):
-        print(BACKS["red"] + self.__str__() + END)
+        print(BLACK_FIGURE + BACKS["red"] + self.__str__() + END)
 
 
 class FieldErrors(ChessException):

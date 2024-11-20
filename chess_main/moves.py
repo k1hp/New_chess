@@ -54,7 +54,9 @@ class Moves(Parent):
         elif isinstance(self.figure, Soldier) and self.vertical in (0, 7):
             raise EndOfField
         elif self.figure.move_cells(self.field) == []:
-            raise ChooseFigureError("Выбранная фигура не может ходить")
+            raise ChooseFigureError(
+                f"Выбранная фигура ({self.figure.__class__.__name__}), не может ходить"
+            )
         else:
             pass
 
