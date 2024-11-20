@@ -7,7 +7,7 @@ from chess_main.ends_of_game import GameEnd
 
 
 def main():
-    player_color = "black"
+    player_color = helpers.get_start_color()
 
     new_field = field.Field()
     new_field.create_new_field()

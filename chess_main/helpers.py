@@ -10,6 +10,10 @@ if TYPE_CHECKING:
     from chess_main.field import Field
 
 
+def get_start_color():
+    return "white"
+
+
 def create_coordinates_tuple(
     horizontal: int, vertical: int, field: Field
 ) -> tuple[int, int, Figure]:
