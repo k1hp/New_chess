@@ -185,6 +185,8 @@ class Blockers:
                     )
                 )
 
+        result.append(self.enemy_figure)
+
         return result
 
     def get_bishop_block(self) -> list:
@@ -216,6 +218,7 @@ class Blockers:
                 y += direction[1]
 
                 if x == king_horizontal and y == king_vertical:
+                    result.append(self.enemy_figure)
                     return result
 
                 if not (

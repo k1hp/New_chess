@@ -10,7 +10,10 @@ from chess_main import figures
     "input_data, color, test_number",
     [
         (["A2", "B1", "B2"], "black", 0),
-        # (["H8", "E8"], "white", 0),
+        (["D1", "C1", "C2"], "white", 1),
+        (["B1", "C2"], "white", 1),
+        (["E3", "C2"], "white", 1),
+        (["D2", "B2", "A3"], "black", 2),
     ],
 )
 def test_shah_brake(input_data, color, test_number):
